@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Liste Magasin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { background: #F0F2F5; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 16px 40px; }
+    .card { background: #fff; border-radius: 18px; box-shadow: 0 2px 20px rgba(0,0,0,0.10); width: 100%; max-width: 480px; overflow: hidden; }
+    .card-header { background: #1A1A2E; padding: 22px 22px 18px; color: #fff; }
+    .card-header .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7B8CDE; margin-bottom: 5px; }
+    .card-header h1 { font-size: 20px; font-weight: 700; }
+    .card-body { padding: 20px 20px 0; display: flex; flex-direction: column; gap: 16px; }
+    .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #888; margin-bottom: 7px; }
+    .field input, .field textarea { width: 100%; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 12px 14px; font-size: 16px; font-family: inherit; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
+    .field input:focus, .field textarea:focus { border-color: #7B8CDE; box-shadow: 0 0 0 3px rgba(123,140,222,0.13); }
+    .field textarea { resize: none; height: 70px; }
+    .divider { height: 1px; background: #F0F2F5; }
+    .model-block { border: 1.5px solid #E0E3E9; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; animation: pop-in 0.15s ease; }
+    @keyframes pop-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .model-block-header { display: flex; justify-content: space-between; align-items: center; }
+    .model-num { font-family: 'Courier New', monospace; font-weight: 700; font-size: 15px; color: #1A1A2E; }
+    .remove-btn { background: none; border: none; color: #bbb; font-size: 20px; cursor: pointer; padding: 0; line-height: 1; }
+    .remove-btn:active { color: #e44; }
+    .model-block input { padding: 8px 12px; font-size: 15px; }
+    .add-row { display: flex; gap: 8px; align-items: stretch; }
+    .add-row input { font-family: 'Courier New', monospace; flex: 1; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 12px 14px; font-size: 16px; font-family: inherit; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
+    .add-row input:focus { border-color: #7B8CDE; box-shadow: 0 0 0 3px rgba(123,140,222,0.13); }
+    .btn-add { background: #1A1A2E; color: #fff; border: none; border-radius: 10px; width: 48px; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .btn-add:active { transform: scale(0.92); }
+    .btn-add:disabled { background: #ccc; }
+    .list-header { display: flex; justify-content: space-between; align-items: center; }
+    .list-header span { font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #888; }
+    .count-badge { background: #1A1A2E; color: #fff; font-family: 'Courier New', monospace; font-size: 11px; padding: 2px 9px; border-radius: 20px; }
+    .empty-state { text-align: center; padding: 22px 0; color: #bbb; font-size: 14px; border: 1.5px dashed #E0E3E9; border-radius: 10px; }
+    .card-footer { padding: 18px 20px 24px; display: flex; flex-direction: column; gap: 10px; }
+    .btn-copy { width: 100%; background: #7B8CDE; color: #fff; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-copy:active { background: #6070c5; }
+    .btn-copy:disabled { background: #ccc; }
+    .btn-copy.copied { background: #3DAA6F; }
+    .btn-msg { width: 100%; background: #3DAA6F; color: #fff; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-msg:active { background: #2e8a58; }
+    .btn-msg:disabled { background: #ccc; }
+    .btn-msg.copied { background: #1A1A2E; }
+    .btn-reset { width: 100%; background: none; color: #bbb; border: 1.5px solid #E0E3E9; border-radius: 12px; padding: 11px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; }
+    .btn-reset:active { background: #fef0f0; color: #e44; border-color: #e44; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1A1A2E; color: #fff; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; opacity: 0; transition: opacity 0.22s, transform 0.22s; pointer-events: none; white-space: nowrap; z-index: 999; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <div class="eyebrow">Gestion stock</div>
+    <h1>Liste de modèles</h1>
+  </div>
+  <div class="card-body">
+
+    <div class="field">
+      <label>Nom du magasin</label>
+      <input type="text" id="storeName" placeholder="Ex. : Boutique Saint-Laurent" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label>Date de visite</label>
+      <input type="date" id="visitDate">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="list-header">
+      <span>Modèles plancher</span>
+      <span class="count-badge" id="countBadge" style="display:none">0</span>
+    </div>
+
+    <div id="emptyState" class="empty-state">Aucun modèle pour l'instant.</div>
+    <div id="modelList"></div>
+
+    <div class="add-row">
+      <input type="text" id="modelInput" placeholder="Ex. : B440" autocomplete="off" autocapitalize="characters">
+      <button class="btn-add" id="btnAdd" onclick="addModel()" disabled>+</button>
+    </div>
+
+  </div>
+  <div class="card-footer">
+    <button class="btn-copy" id="btnCopy" onclick="copyPourExcel()" disabled>📋 Copier pour Excel</button>
+    <button class="btn-msg" id="btnMsg" onclick="copyPourMessage()" disabled>💬 Copier pour message</button>
+    <button class="btn-reset" onclick="resetAll()">🗑 Tout effacer</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  var models = []; // [{num, prix, note}]
+  var modelInput = document.getElementById('modelInput');
+  var btnAdd = document.getElementById('btnAdd');
+  var btnCopy = document.getElementById('btnCopy');
+  var btnMsg = document.getElementById('btnMsg');
+
+  // Set today's date by default
+  var today = new Date();
+  var yyyy = today.getFullYear();
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('visitDate').value = yyyy+'-'+mm+'-'+dd;
+
+  modelInput.addEventListener('input', function() { btnAdd.disabled = this.value.trim() === ''; });
+  modelInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') addModel(); });
+
+  function addModel() {
+    var val = modelInput.value.trim().toUpperCase();
+    if (!val) return;
+    models.push({ num: val, prix: '', note: '' });
+    modelInput.value = '';
+    btnAdd.disabled = true;
+    render();
+    // Focus the price field of the new model
+    setTimeout(function() {
+      var inputs = document.querySelectorAll('.prix-input');
+      if (inputs.length) inputs[inputs.length-1].focus();
+    }, 100);
+  }
+
+  function removeModel(idx) { models.splice(idx, 1); render(); }
+
+  function updateField(idx, field, val) { models[idx][field] = val; }
+
+  function render() {
+    var list = document.getElementById('modelList');
+    var empty = document.getElementById('emptyState');
+    var badge = document.getElementById('countBadge');
+    list.innerHTML = '';
+
+    if (models.length === 0) {
+      empty.style.display = 'block';
+      badge.style.display = 'none';
+      btnCopy.disabled = true;
+      btnMsg.disabled = true;
+      return;
+    }
+
+    empty.style.display = 'none';
+    badge.style.display = 'inline-block';
+    badge.textContent = models.length;
+    btnCopy.disabled = false;
+    btnMsg.disabled = false;
+
+    models.forEach(function(m, i) {
+      var block = document.createElement('div');
+      block.className = 'model-block';
+      block.innerHTML =
+        '<div class="model-block-header">' +
+          '<span class="model-num">' + m.num + '</span>' +
+          '<button class="remove-btn" onclick="removeModel(' + i + ')">×</button>' +
+        '</div>' +
+        '<input class="prix-input" type="number" placeholder="Prix (ex. 299.99)" value="' + m.prix + '" ' +
+          'oninput="updateField(' + i + ', \'prix\', this.value)" ' +
+          'style="border:1.5px solid #E0E3E9; border-radius:10px; padding:8px 12px; font-size:15px; width:100%; outline:none; -webkit-appearance:none;">' +
+        '<textarea placeholder="Note (optionnel)" ' +
+          'oninput="updateField(' + i + ', \'note\', this.value)" ' +
+          'style="border:1.5px solid #E0E3E9; border-radius:10px; padding:8px 12px; font-size:15px; width:100%; outline:none; resize:none; height:60px; font-family:inherit;">' + m.note + '</textarea>';
+      list.appendChild(block);
+    });
+  }
+
+  function buildExcel() {
+    var store = document.getElementById('storeName').value.trim();
+    var date  = document.getElementById('visitDate').value;
+    var rows  = [];
+    rows.push('Nom du magasin\t' + store);
+    rows.push('Date\t' + date);
+    rows.push('');
+    rows.push('Modele\tPrix\tNote');
+    models.forEach(function(m) {
+      rows.push(m.num + '\t' + m.prix + '\t' + m.note);
+    });
+    return rows.join('\n');
+  }
+
+  function buildMessage() {
+    var store = document.getElementById('storeName').value.trim();
+    var date  = document.getElementById('visitDate').value;
+    var lines = [];
+    if (store) lines.push('Magasin : ' + store);
+    if (date)  lines.push('Date : ' + date);
+    lines.push('');
+    models.forEach(function(m) {
+      var line = m.num;
+      if (m.prix) line += '  —  ' + m.prix + '$';
+      if (m.note) line += '  (' + m.note + ')';
+      lines.push(line);
+    });
+    return lines.join('\n');
+  }
+
+  function copyPourExcel() {
+    if (!models.length) return;
+    copier(buildExcel(), btnCopy, '📋 Copier pour Excel', '✓ Copié pour Excel !', '✓ Copié — colle dans Excel');
+  }
+
+  function copyPourMessage() {
+    if (!models.length) return;
+    copier(buildMessage(), btnMsg, '💬 Copier pour message', '✓ Copié !', '✓ Copié — colle dans ton message');
+  }
+
+  function copier(text, btn, labelOrig, labelCopied, toastMsg) {
+    function done() {
+      btn.classList.add('copied');
+      btn.textContent = labelCopied;
+      showToast(toastMsg);
+      setTimeout(function() { btn.classList.remove('copied'); btn.innerHTML = labelOrig; }, 2500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function() { fallback(text, done); });
+    } else { fallback(text, done); }
+  }
+
+  function fallback(text, cb) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); cb(); } catch(e) { alert('Copiez manuellement :\n\n' + text); }
+    document.body.removeChild(ta);
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2500);
+  }
+
+  function resetAll() {
+    if (models.length === 0 && !document.getElementById('storeName').value) return;
+    if (confirm('Tout effacer ?')) {
+      models = [];
+      document.getElementById('storeName').value = '';
+      document.getElementById('visitDate').value = yyyy+'-'+mm+'-'+dd;
+      modelInput.value = '';
+      btnAdd.disabled = true;
+      render();
+    }
+  }
+</script>
+</body>
+</html>
