@@ -4,14 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Liste Magasin</title>
+  <title>Liste Magasin / Store List</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { background: #F0F2F5; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px 16px 40px; }
-    .card { background: #fff; border-radius: 18px; box-shadow: 0 2px 20px rgba(0,0,0,0.10); width: 100%; max-width: 480px; overflow: hidden; }
-    .card-header { background: #1A1A2E; padding: 22px 22px 18px; color: #fff; }
-    .card-header .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7B8CDE; margin-bottom: 5px; }
-    .card-header h1 { font-size: 20px; font-weight: 700; }
+    body { background: #1A1A2E; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+    /* LANGUE SELECTOR */
+    #langScreen { display: flex; flex-direction: column; align-items: center; gap: 32px; animation: fadein 0.4s ease; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .lang-logo { font-size: 48px; }
+    .lang-title { color: #fff; font-size: 18px; font-weight: 600; letter-spacing: 0.05em; text-align: center; line-height: 1.6; }
+    .lang-title span { color: #7B8CDE; }
+    .lang-btns { display: flex; flex-direction: column; gap: 14px; width: 260px; }
+    .lang-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 17px; font-weight: 700; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.1s; }
+    .lang-btn:active { transform: scale(0.96); }
+    .lang-btn-fr { background: #7B8CDE; color: #fff; }
+    .lang-btn-en { background: #fff; color: #1A1A2E; }
+
+    /* APP */
+    #appScreen { display: none; width: 100%; max-width: 480px; animation: fadein 0.3s ease; }
+    .card { background: #fff; border-radius: 18px; box-shadow: 0 2px 20px rgba(0,0,0,0.10); width: 100%; overflow: hidden; }
+    .card-header { background: #1A1A2E; padding: 22px 22px 18px; color: #fff; display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-header-text .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7B8CDE; margin-bottom: 5px; }
+    .card-header-text h1 { font-size: 20px; font-weight: 700; }
+    .lang-switch { background: rgba(255,255,255,0.15); border: none; color: #fff; border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .lang-switch:active { background: rgba(255,255,255,0.25); }
     .card-body { padding: 20px 20px 0; display: flex; flex-direction: column; gap: 16px; }
     .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #888; margin-bottom: 7px; }
     .field input, .field select { width: 100%; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 12px 14px; font-size: 16px; font-family: inherit; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
@@ -21,20 +38,18 @@
     .add-row { display: flex; gap: 8px; align-items: stretch; }
     .add-row input { font-family: 'Courier New', monospace; flex: 1; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 12px 14px; font-size: 16px; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
     .add-row input:focus { border-color: #7B8CDE; box-shadow: 0 0 0 3px rgba(123,140,222,0.13); }
-    .add-row-prix { display: flex; gap: 8px; }
-    .add-row-prix input { flex: 1; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 10px 12px; font-size: 15px; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
-    .add-row-prix input:focus { border-color: #7B8CDE; }
-    .note-input { width: 100%; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 10px 12px; font-size: 15px; font-family: inherit; color: #1A1A2E; outline: none; background: #fff; resize: none; height: 60px; }
-    .note-input:focus { border-color: #7B8CDE; }
+    .add-row-sub { display: flex; gap: 8px; }
+    .add-row-sub input { flex: 1; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 10px 12px; font-size: 15px; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
+    .add-row-sub input:focus { border-color: #7B8CDE; }
     .btn-add { background: #1A1A2E; color: #fff; border: none; border-radius: 10px; width: 48px; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .btn-add:active { transform: scale(0.92); }
     .btn-add:disabled { background: #ccc; }
     .cat-section { display: flex; flex-direction: column; gap: 8px; }
     .cat-title { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 10px; border-radius: 8px; }
-    .cat-inclinables { background: #E8EAF6; color: #3949AB; }
-    .cat-stationnaires { background: #E8F5E9; color: #2E7D32; }
-    .cat-chambres { background: #FFF3E0; color: #E65100; }
-    .cat-cuisines { background: #FCE4EC; color: #880E4F; }
+    .cat-0 { background: #E8EAF6; color: #3949AB; }
+    .cat-1 { background: #E8F5E9; color: #2E7D32; }
+    .cat-2 { background: #FFF3E0; color: #E65100; }
+    .cat-3 { background: #FCE4EC; color: #880E4F; }
     .model-block { border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; animation: pop-in 0.15s ease; }
     @keyframes pop-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .model-info { flex: 1; }
@@ -60,92 +75,186 @@
   </style>
 </head>
 <body>
-<div class="card">
-  <div class="card-header">
-    <div class="eyebrow">Gestion stock</div>
-    <h1>Liste de modèles</h1>
+
+<!-- ÉCRAN CHOIX LANGUE -->
+<div id="langScreen">
+  <div class="lang-logo">🛋</div>
+  <div class="lang-title">Choisissez votre langue<br><span>Choose your language</span></div>
+  <div class="lang-btns">
+    <button class="lang-btn lang-btn-fr" onclick="setLang('fr')">🇨🇦 &nbsp;Version Français</button>
+    <button class="lang-btn lang-btn-en" onclick="setLang('en')">🇨🇦 &nbsp;English Version</button>
   </div>
-  <div class="card-body">
+</div>
 
-    <div class="field">
-      <label>Nom du magasin</label>
-      <input type="text" id="storeName" placeholder="Ex. : Boutique Saint-Laurent" autocomplete="off">
+<!-- APP -->
+<div id="appScreen">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-text">
+        <div class="eyebrow" id="hdrEyebrow"></div>
+        <h1 id="hdrTitle"></h1>
+      </div>
+      <button class="lang-switch" onclick="switchLang()" id="langSwitchBtn"></button>
     </div>
-
-    <div class="field">
-      <label>Date de visite</label>
-      <input type="date" id="visitDate">
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- Formulaire ajout -->
-    <div class="add-section">
+    <div class="card-body">
       <div class="field">
-        <label>Catégorie</label>
-        <select id="catSelect">
-          <option value="Inclinables">🛋 Inclinables</option>
-          <option value="Stationnaires">🛋 Stationnaires</option>
-          <option value="Chambres">🛏 Chambres</option>
-          <option value="Cuisines">🪑 Cuisines</option>
-        </select>
+        <label id="lblStore"></label>
+        <input type="text" id="storeName" autocomplete="off">
       </div>
-      <div class="add-row">
-        <input type="text" id="modelInput" placeholder="Numéro de modèle" autocomplete="off" autocapitalize="characters">
-        <button class="btn-add" id="btnAdd" onclick="addModel()" disabled>+</button>
+      <div class="field">
+        <label id="lblDate"></label>
+        <input type="date" id="visitDate">
       </div>
-      <div class="add-row-prix">
-        <input type="number" id="prixInput" placeholder="Prix (optionnel)">
-        <input type="text" id="noteInput" placeholder="Note (optionnel)">
+      <div class="divider"></div>
+      <div class="add-section">
+        <div class="field">
+          <label id="lblCat"></label>
+          <select id="catSelect"></select>
+        </div>
+        <div class="add-row">
+          <input type="text" id="modelInput" autocomplete="off" autocapitalize="characters">
+          <button class="btn-add" id="btnAdd" onclick="addModel()" disabled>+</button>
+        </div>
+        <div class="add-row-sub">
+          <input type="number" id="prixInput">
+          <input type="text" id="noteInput">
+        </div>
       </div>
+      <div class="divider"></div>
+      <div id="listesCategories"></div>
     </div>
-
-    <div class="divider"></div>
-
-    <!-- Listes par catégorie -->
-    <div id="listesCategories"></div>
-
-  </div>
-  <div class="card-footer">
-    <button class="btn-copy" id="btnCopy" onclick="copyPourExcel()" disabled>📋 Copier pour Excel</button>
-    <button class="btn-msg" id="btnMsg" onclick="copyPourMessage()" disabled>💬 Copier pour message</button>
-    <button class="btn-reset" onclick="resetAll()">🗑 Tout effacer</button>
+    <div class="card-footer">
+      <button class="btn-copy" id="btnCopy" onclick="copyForExcel()" disabled></button>
+      <button class="btn-msg"  id="btnMsg"  onclick="copyForMessage()" disabled></button>
+      <button class="btn-reset" onclick="resetAll()" id="btnReset"></button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-  var CATEGORIES = ['Inclinables', 'Stationnaires', 'Chambres', 'Cuisines'];
-  var CAT_COLORS = {
-    'Inclinables':   'cat-inclinables',
-    'Stationnaires': 'cat-stationnaires',
-    'Chambres':      'cat-chambres',
-    'Cuisines':      'cat-cuisines'
-  };
-  var CAT_ICONS = {
-    'Inclinables':   '🛋',
-    'Stationnaires': '🛋',
-    'Chambres':      '🛏',
-    'Cuisines':      '🪑'
+  var STRINGS = {
+    fr: {
+      eyebrow: 'Gestion stock',
+      title: 'Liste de modèles',
+      switchBtn: '🇨🇦 English',
+      store: 'Nom du magasin',
+      storePH: 'Ex. : Boutique Saint-Laurent',
+      date: 'Date de visite',
+      cat: 'Catégorie',
+      modelPH: 'Numéro de modèle',
+      prixPH: 'Prix (optionnel)',
+      notePH: 'Note (optionnel)',
+      btnExcel: '📋 Copier pour Excel',
+      btnMsg: '💬 Copier pour message',
+      btnReset: '🗑 Tout effacer',
+      copiedExcel: '✓ Copié pour Excel !',
+      copiedMsg: '✓ Copié !',
+      toastExcel: '✓ Copié — colle dans Excel',
+      toastMsg: '✓ Copié — colle dans ton message',
+      emptyCat: 'Aucun modèle',
+      confirmReset: 'Tout effacer ?',
+      storeLabel: 'Nom du magasin',
+      dateLabel: 'Date',
+      catLabel: 'Catégorie',
+      modelLabel: 'Modele',
+      priceLabel: 'Prix',
+      noteLabel: 'Note',
+      storeMsg: 'Magasin',
+      dateMsg: 'Date',
+      cats: ['Inclinables','Stationnaires','Chambres','Cuisines']
+    },
+    en: {
+      eyebrow: 'Stock Management',
+      title: 'Floor Model List',
+      switchBtn: '🇨🇦 Français',
+      store: 'Store Name',
+      storePH: 'Ex.: Saint-Laurent Boutique',
+      date: 'Visit Date',
+      cat: 'Category',
+      modelPH: 'Model number',
+      prixPH: 'Price (optional)',
+      notePH: 'Note (optional)',
+      btnExcel: '📋 Copy for Excel',
+      btnMsg: '💬 Copy for message',
+      btnReset: '🗑 Clear all',
+      copiedExcel: '✓ Copied for Excel!',
+      copiedMsg: '✓ Copied!',
+      toastExcel: '✓ Copied — paste in Excel',
+      toastMsg: '✓ Copied — paste in your message',
+      emptyCat: 'No models yet',
+      confirmReset: 'Clear everything?',
+      storeLabel: 'Store Name',
+      dateLabel: 'Visit Date',
+      catLabel: 'Category',
+      modelLabel: 'Model',
+      priceLabel: 'Price',
+      noteLabel: 'Note',
+      storeMsg: 'Store',
+      dateMsg: 'Date',
+      cats: ['Recliners','Stationary','Bedrooms','Dining']
+    }
   };
 
-  // models[cat] = [{num, prix, note}]
-  var models = { Inclinables: [], Stationnaires: [], Chambres: [], Cuisines: [] };
+  var CAT_ICONS = ['🛋','🛋','🛏','🪑'];
+  var lang = 'fr';
+  var models = { 0: [], 1: [], 2: [], 3: [] };
+
+  var today = new Date();
+  var yyyy  = today.getFullYear();
+  var mm    = String(today.getMonth()+1).padStart(2,'0');
+  var dd    = String(today.getDate()).padStart(2,'0');
+  var todayStr = yyyy+'-'+mm+'-'+dd;
 
   var modelInput = document.getElementById('modelInput');
   var btnAdd     = document.getElementById('btnAdd');
   var btnCopy    = document.getElementById('btnCopy');
   var btnMsg     = document.getElementById('btnMsg');
 
-  // Date today
-  var today = new Date();
-  var yyyy  = today.getFullYear();
-  var mm    = String(today.getMonth()+1).padStart(2,'0');
-  var dd    = String(today.getDate()).padStart(2,'0');
-  document.getElementById('visitDate').value = yyyy+'-'+mm+'-'+dd;
-
   modelInput.addEventListener('input', function() { btnAdd.disabled = this.value.trim() === ''; });
   modelInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') addModel(); });
+
+  function setLang(l) {
+    lang = l;
+    document.getElementById('langScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'block';
+    document.getElementById('visitDate').value = todayStr;
+    applyStrings();
+    render();
+  }
+
+  function switchLang() {
+    lang = lang === 'fr' ? 'en' : 'fr';
+    applyStrings();
+    render();
+  }
+
+  function applyStrings() {
+    var s = STRINGS[lang];
+    document.getElementById('hdrEyebrow').textContent   = s.eyebrow;
+    document.getElementById('hdrTitle').textContent     = s.title;
+    document.getElementById('langSwitchBtn').textContent = s.switchBtn;
+    document.getElementById('lblStore').textContent     = s.store;
+    document.getElementById('storeName').placeholder    = s.storePH;
+    document.getElementById('lblDate').textContent      = s.date;
+    document.getElementById('lblCat').textContent       = s.cat;
+    document.getElementById('modelInput').placeholder   = s.modelPH;
+    document.getElementById('prixInput').placeholder    = s.prixPH;
+    document.getElementById('noteInput').placeholder    = s.notePH;
+    document.getElementById('btnReset').textContent     = s.btnReset;
+    var total = totalCount();
+    btnCopy.textContent = s.btnExcel;
+    btnMsg.textContent  = s.btnMsg;
+    // Rebuild category select
+    var sel = document.getElementById('catSelect');
+    sel.innerHTML = '';
+    s.cats.forEach(function(c, i) {
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = CAT_ICONS[i] + ' ' + c;
+      sel.appendChild(opt);
+    });
+  }
 
   function naturalSort(a, b) {
     return a.num.localeCompare(b.num, undefined, { numeric: true, sensitivity: 'base' });
@@ -154,7 +263,7 @@
   function addModel() {
     var val  = modelInput.value.trim().toUpperCase();
     if (!val) return;
-    var cat  = document.getElementById('catSelect').value;
+    var cat  = parseInt(document.getElementById('catSelect').value);
     var prix = document.getElementById('prixInput').value.trim();
     var note = document.getElementById('noteInput').value.trim();
     models[cat].push({ num: val, prix: prix, note: note });
@@ -173,44 +282,43 @@
   }
 
   function totalCount() {
-    return CATEGORIES.reduce(function(acc, c) { return acc + models[c].length; }, 0);
+    return [0,1,2,3].reduce(function(acc, c) { return acc + models[c].length; }, 0);
   }
 
   function render() {
+    var s = STRINGS[lang];
     var container = document.getElementById('listesCategories');
     container.innerHTML = '';
     var total = totalCount();
     btnCopy.disabled = total === 0;
     btnMsg.disabled  = total === 0;
 
-    CATEGORIES.forEach(function(cat) {
+    [0,1,2,3].forEach(function(ci) {
       var section = document.createElement('div');
       section.className = 'cat-section';
-
       var title = document.createElement('div');
-      title.className = 'cat-title ' + CAT_COLORS[cat];
-      title.innerHTML = CAT_ICONS[cat] + ' ' + cat +
-        (models[cat].length > 0 ? '<span class="count-badge">' + models[cat].length + '</span>' : '');
+      title.className = 'cat-title cat-' + ci;
+      title.innerHTML = CAT_ICONS[ci] + ' ' + s.cats[ci] +
+        (models[ci].length > 0 ? '<span class="count-badge">' + models[ci].length + '</span>' : '');
       section.appendChild(title);
-
-      if (models[cat].length === 0) {
+      if (models[ci].length === 0) {
         var empty = document.createElement('div');
         empty.className = 'empty-cat';
-        empty.textContent = 'Aucun modèle';
+        empty.textContent = s.emptyCat;
         section.appendChild(empty);
       } else {
-        models[cat].forEach(function(m, i) {
+        models[ci].forEach(function(m, i) {
           var block = document.createElement('div');
           block.className = 'model-block';
           var sub = [];
-          if (m.prix) sub.push(m.prix + '$');
+          if (m.prix) sub.push((lang === 'fr' ? m.prix + '$' : '$' + m.prix));
           if (m.note) sub.push(m.note);
           block.innerHTML =
             '<div class="model-info">' +
               '<div class="model-num">' + m.num + '</div>' +
               (sub.length ? '<div class="model-sub">' + sub.join(' — ') + '</div>' : '') +
             '</div>' +
-            '<button class="remove-btn" onclick="removeModel(\'' + cat + '\',' + i + ')">×</button>';
+            '<button class="remove-btn" onclick="removeModel(' + ci + ',' + i + ')">×</button>';
           section.appendChild(block);
         });
       }
@@ -219,34 +327,36 @@
   }
 
   function buildExcel() {
+    var s     = STRINGS[lang];
     var store = document.getElementById('storeName').value.trim();
     var date  = document.getElementById('visitDate').value;
     var rows  = [];
-    rows.push('Nom du magasin\t' + store);
-    rows.push('Date\t' + date);
+    rows.push(s.storeLabel + '\t' + store);
+    rows.push(s.dateLabel  + '\t' + date);
     rows.push('');
-    rows.push('Catégorie\tModele\tPrix\tNote');
-    CATEGORIES.forEach(function(cat) {
-      models[cat].forEach(function(m) {
-        rows.push(cat + '\t' + m.num + '\t' + m.prix + '\t' + m.note);
+    rows.push(s.catLabel + '\t' + s.modelLabel + '\t' + s.priceLabel + '\t' + s.noteLabel);
+    [0,1,2,3].forEach(function(ci) {
+      models[ci].forEach(function(m) {
+        rows.push(s.cats[ci] + '\t' + m.num + '\t' + m.prix + '\t' + m.note);
       });
     });
     return rows.join('\n');
   }
 
   function buildMessage() {
+    var s     = STRINGS[lang];
     var store = document.getElementById('storeName').value.trim();
     var date  = document.getElementById('visitDate').value;
     var lines = [];
-    if (store) lines.push('Magasin : ' + store);
-    if (date)  lines.push('Date : ' + date);
-    CATEGORIES.forEach(function(cat) {
-      if (models[cat].length > 0) {
+    if (store) lines.push(s.storeMsg + ' : ' + store);
+    if (date)  lines.push(s.dateMsg  + ' : ' + date);
+    [0,1,2,3].forEach(function(ci) {
+      if (models[ci].length > 0) {
         lines.push('');
-        lines.push(CAT_ICONS[cat] + ' ' + cat);
-        models[cat].forEach(function(m) {
+        lines.push(CAT_ICONS[ci] + ' ' + s.cats[ci]);
+        models[ci].forEach(function(m) {
           var line = m.num;
-          if (m.prix) line += '  —  ' + m.prix + '$';
+          if (m.prix) line += '  —  ' + (lang === 'fr' ? m.prix + '$' : '$' + m.prix);
           if (m.note) line += '  (' + m.note + ')';
           lines.push(line);
         });
@@ -255,14 +365,16 @@
     return lines.join('\n');
   }
 
-  function copyPourExcel() {
+  function copyForExcel() {
     if (totalCount() === 0) return;
-    copier(buildExcel(), btnCopy, '📋 Copier pour Excel', '✓ Copié pour Excel !', '✓ Copié — colle dans Excel');
+    var s = STRINGS[lang];
+    copier(buildExcel(), btnCopy, s.btnExcel, s.copiedExcel, s.toastExcel);
   }
 
-  function copyPourMessage() {
+  function copyForMessage() {
     if (totalCount() === 0) return;
-    copier(buildMessage(), btnMsg, '💬 Copier pour message', '✓ Copié !', '✓ Copié — colle dans ton message');
+    var s = STRINGS[lang];
+    copier(buildMessage(), btnMsg, s.btnMsg, s.copiedMsg, s.toastMsg);
   }
 
   function copier(text, btn, labelOrig, labelCopied, toastMsg) {
@@ -270,7 +382,7 @@
       btn.classList.add('copied');
       btn.textContent = labelCopied;
       showToast(toastMsg);
-      setTimeout(function() { btn.classList.remove('copied'); btn.innerHTML = labelOrig; }, 2500);
+      setTimeout(function() { btn.classList.remove('copied'); btn.textContent = labelOrig; }, 2500);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done).catch(function() { fallback(text, done); });
@@ -281,7 +393,7 @@
     var ta = document.createElement('textarea');
     ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.focus(); ta.select();
-    try { document.execCommand('copy'); cb(); } catch(e) { alert('Copiez manuellement :\n\n' + text); }
+    try { document.execCommand('copy'); cb(); } catch(e) { alert(text); }
     document.body.removeChild(ta);
   }
 
@@ -293,11 +405,12 @@
   }
 
   function resetAll() {
+    var s = STRINGS[lang];
     if (totalCount() === 0 && !document.getElementById('storeName').value) return;
-    if (confirm('Tout effacer ?')) {
-      models = { Inclinables: [], Stationnaires: [], Chambres: [], Cuisines: [] };
+    if (confirm(s.confirmReset)) {
+      models = { 0: [], 1: [], 2: [], 3: [] };
       document.getElementById('storeName').value = '';
-      document.getElementById('visitDate').value = yyyy+'-'+mm+'-'+dd;
+      document.getElementById('visitDate').value = todayStr;
       modelInput.value = '';
       document.getElementById('prixInput').value = '';
       document.getElementById('noteInput').value = '';
@@ -305,8 +418,6 @@
       render();
     }
   }
-
-  render();
 </script>
 </body>
 </html>
