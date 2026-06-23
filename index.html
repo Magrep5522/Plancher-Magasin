@@ -211,8 +211,36 @@
   var btnCopy    = document.getElementById('btnCopy');
   var btnMsg     = document.getElementById('btnMsg');
 
+  var STORAGE_KEY = 'listeMagasinData';
+
+  function saveToStorage() {
+    try {
+      var data = {
+        lang: lang,
+        storeName: document.getElementById('storeName').value,
+        visitDate: document.getElementById('visitDate').value,
+        models: models
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch(e) { /* localStorage unavailable, ignore */ }
+  }
+
+  function loadFromStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch(e) { return null; }
+  }
+
+  function clearStorage() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  }
+
   modelInput.addEventListener('input', function() { btnAdd.disabled = this.value.trim() === ''; });
   modelInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') addModel(); });
+  document.getElementById('storeName').addEventListener('input', saveToStorage);
+  document.getElementById('visitDate').addEventListener('input', saveToStorage);
 
   function setLang(l) {
     lang = l;
@@ -221,13 +249,30 @@
     document.getElementById('visitDate').value = todayStr;
     applyStrings();
     render();
+    saveToStorage();
   }
 
   function switchLang() {
     lang = lang === 'fr' ? 'en' : 'fr';
     applyStrings();
     render();
+    saveToStorage();
   }
+
+  // --- Restauration automatique au chargement ---
+  (function restoreOnLoad() {
+    var saved = loadFromStorage();
+    if (saved && (saved.storeName || (saved.models && Object.values(saved.models).some(function(arr){return arr.length>0;})))) {
+      lang = saved.lang || 'fr';
+      models = saved.models || { 0: [], 1: [], 2: [], 3: [] };
+      document.getElementById('langScreen').style.display = 'none';
+      document.getElementById('appScreen').style.display = 'block';
+      applyStrings();
+      document.getElementById('storeName').value = saved.storeName || '';
+      document.getElementById('visitDate').value = saved.visitDate || todayStr;
+      render();
+    }
+  })();
 
   function applyStrings() {
     var s = STRINGS[lang];
@@ -274,11 +319,13 @@
     btnAdd.disabled = true;
     modelInput.focus();
     render();
+    saveToStorage();
   }
 
   function removeModel(cat, idx) {
     models[cat].splice(idx, 1);
     render();
+    saveToStorage();
   }
 
   function totalCount() {
@@ -416,6 +463,7 @@
       document.getElementById('noteInput').value = '';
       btnAdd.disabled = true;
       render();
+      clearStorage();
     }
   }
 </script>
