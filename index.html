@@ -50,6 +50,7 @@
     .cat-1 { background: #E8F5E9; color: #2E7D32; }
     .cat-2 { background: #FFF3E0; color: #E65100; }
     .cat-3 { background: #FCE4EC; color: #880E4F; }
+    .cat-4 { background: #E8F5E9; color: #1B5E20; }
     .model-block { border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; animation: pop-in 0.15s ease; }
     @keyframes pop-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .model-info { flex: 1; }
@@ -162,7 +163,7 @@
       noteLabel: 'Note',
       storeMsg: 'Magasin',
       dateMsg: 'Date',
-      cats: ['Inclinables','Stationnaires','Chambres','Cuisines']
+      cats: ['Inclinables','Stationnaires','Chambres','Cuisines','Nouveau Placement']
     },
     en: {
       eyebrow: 'Stock Management',
@@ -192,13 +193,13 @@
       noteLabel: 'Note',
       storeMsg: 'Store',
       dateMsg: 'Date',
-      cats: ['Recliners','Stationary','Bedrooms','Dining']
+      cats: ['Recliners','Stationary','Bedrooms','Dining','New Placement']
     }
   };
 
-  var CAT_ICONS = ['🛋','🛋','🛏','🪑'];
+  var CAT_ICONS = ['🛋','🛋','🛏','🪑','🆕'];
   var lang = 'fr';
-  var models = { 0: [], 1: [], 2: [], 3: [] };
+  var models = { 0: [], 1: [], 2: [], 3: [], 4: [] };
 
   var today = new Date();
   var yyyy  = today.getFullYear();
@@ -264,7 +265,7 @@
     var saved = loadFromStorage();
     if (saved && (saved.storeName || (saved.models && Object.values(saved.models).some(function(arr){return arr.length>0;})))) {
       lang = saved.lang || 'fr';
-      models = saved.models || { 0: [], 1: [], 2: [], 3: [] };
+      models = saved.models || { 0: [], 1: [], 2: [], 3: [], 4: [] };
       document.getElementById('langScreen').style.display = 'none';
       document.getElementById('appScreen').style.display = 'block';
       applyStrings();
@@ -329,7 +330,7 @@
   }
 
   function totalCount() {
-    return [0,1,2,3].reduce(function(acc, c) { return acc + models[c].length; }, 0);
+    return [0,1,2,3,4].reduce(function(acc, c) { return acc + models[c].length; }, 0);
   }
 
   function render() {
@@ -340,7 +341,7 @@
     btnCopy.disabled = total === 0;
     btnMsg.disabled  = total === 0;
 
-    [0,1,2,3].forEach(function(ci) {
+    [0,1,2,3,4].forEach(function(ci) {
       var section = document.createElement('div');
       section.className = 'cat-section';
       var title = document.createElement('div');
@@ -382,7 +383,7 @@
     rows.push(s.dateLabel  + '\t' + date);
     rows.push('');
     rows.push(s.catLabel + '\t' + s.modelLabel + '\t' + s.priceLabel + '\t' + s.noteLabel);
-    [0,1,2,3].forEach(function(ci) {
+    [0,1,2,3,4].forEach(function(ci) {
       models[ci].forEach(function(m) {
         rows.push(s.cats[ci] + '\t' + m.num + '\t' + m.prix + '\t' + m.note);
       });
@@ -397,7 +398,7 @@
     var lines = [];
     if (store) lines.push(s.storeMsg + ' : ' + store);
     if (date)  lines.push(s.dateMsg  + ' : ' + date);
-    [0,1,2,3].forEach(function(ci) {
+    [0,1,2,3,4].forEach(function(ci) {
       if (models[ci].length > 0) {
         lines.push('');
         lines.push(CAT_ICONS[ci] + ' ' + s.cats[ci]);
@@ -455,7 +456,7 @@
     var s = STRINGS[lang];
     if (totalCount() === 0 && !document.getElementById('storeName').value) return;
     if (confirm(s.confirmReset)) {
-      models = { 0: [], 1: [], 2: [], 3: [] };
+      models = { 0: [], 1: [], 2: [], 3: [], 4: [] };
       document.getElementById('storeName').value = '';
       document.getElementById('visitDate').value = todayStr;
       modelInput.value = '';
