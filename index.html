@@ -8,8 +8,6 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { background: #1A1A2E; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-
-    /* LANGUE SELECTOR */
     #langScreen { display: flex; flex-direction: column; align-items: center; gap: 32px; animation: fadein 0.4s ease; }
     @keyframes fadein { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .lang-logo { font-size: 48px; }
@@ -20,19 +18,17 @@
     .lang-btn:active { transform: scale(0.96); }
     .lang-btn-fr { background: #7B8CDE; color: #fff; }
     .lang-btn-en { background: #fff; color: #1A1A2E; }
-
-    /* APP */
     #appScreen { display: none; width: 100%; max-width: 480px; animation: fadein 0.3s ease; }
     .card { background: #fff; border-radius: 18px; box-shadow: 0 2px 20px rgba(0,0,0,0.10); width: 100%; overflow: hidden; }
     .card-header { background: #1A1A2E; padding: 22px 22px 18px; color: #fff; display: flex; justify-content: space-between; align-items: flex-start; }
     .card-header-text .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #7B8CDE; margin-bottom: 5px; }
     .card-header-text h1 { font-size: 20px; font-weight: 700; }
     .lang-switch { background: rgba(255,255,255,0.15); border: none; color: #fff; border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
-    .lang-switch:active { background: rgba(255,255,255,0.25); }
     .card-body { padding: 20px 20px 0; display: flex; flex-direction: column; gap: 16px; }
     .field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #888; margin-bottom: 7px; }
-    .field input, .field select { width: 100%; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 12px 14px; font-size: 16px; font-family: inherit; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
-    .field input:focus, .field select:focus { border-color: #7B8CDE; box-shadow: 0 0 0 3px rgba(123,140,222,0.13); }
+    .field input, .field select, .field textarea { width: 100%; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 12px 14px; font-size: 16px; font-family: inherit; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: #7B8CDE; box-shadow: 0 0 0 3px rgba(123,140,222,0.13); }
+    .field textarea { resize: none; height: 60px; }
     .divider { height: 1px; background: #F0F2F5; }
     .add-section { display: flex; flex-direction: column; gap: 10px; }
     .add-row { display: flex; gap: 8px; align-items: stretch; }
@@ -40,7 +36,9 @@
     .add-row input:focus { border-color: #7B8CDE; box-shadow: 0 0 0 3px rgba(123,140,222,0.13); }
     .add-row-sub { display: flex; gap: 8px; }
     .add-row-sub input { flex: 1; border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 10px 12px; font-size: 15px; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; }
-    .add-row-sub input:focus { border-color: #7B8CDE; }
+    .suffixes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .suffixes-grid input { border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 8px 10px; font-size: 14px; font-family: 'Courier New', monospace; color: #1A1A2E; outline: none; background: #fff; -webkit-appearance: none; width: 100%; text-align: center; }
+    .suffixes-grid input:focus { border-color: #7B8CDE; }
     .btn-add { background: #1A1A2E; color: #fff; border: none; border-radius: 10px; width: 48px; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .btn-add:active { transform: scale(0.92); }
     .btn-add:disabled { background: #ccc; }
@@ -50,7 +48,7 @@
     .cat-1 { background: #E8F5E9; color: #2E7D32; }
     .cat-2 { background: #FFF3E0; color: #E65100; }
     .cat-3 { background: #FCE4EC; color: #880E4F; }
-    .cat-4 { background: #E8F5E9; color: #1B5E20; }
+    .cat-4 { background: #E0F7FA; color: #00695C; }
     .model-block { border: 1.5px solid #E0E3E9; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; animation: pop-in 0.15s ease; }
     @keyframes pop-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .model-info { flex: 1; }
@@ -60,6 +58,7 @@
     .remove-btn:active { color: #e44; }
     .empty-cat { font-size: 13px; color: #ccc; padding: 6px 10px; font-style: italic; }
     .count-badge { background: #1A1A2E; color: #fff; font-family: 'Courier New', monospace; font-size: 11px; padding: 2px 9px; border-radius: 20px; display: inline-block; margin-left: 8px; }
+    .sfx-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #aaa; margin-bottom: 6px; }
     .card-footer { padding: 18px 20px 24px; display: flex; flex-direction: column; gap: 10px; }
     .btn-copy { width: 100%; background: #7B8CDE; color: #fff; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-copy:active { background: #6070c5; }
@@ -77,7 +76,6 @@
 </head>
 <body>
 
-<!-- ÉCRAN CHOIX LANGUE -->
 <div id="langScreen">
   <div class="lang-logo">🛋</div>
   <div class="lang-title">Choisissez votre langue<br><span>Choose your language</span></div>
@@ -87,7 +85,6 @@
   </div>
 </div>
 
-<!-- APP -->
 <div id="appScreen">
   <div class="card">
     <div class="card-header">
@@ -120,6 +117,17 @@
           <input type="number" id="prixInput">
           <input type="text" id="noteInput">
         </div>
+        <div>
+          <div class="sfx-label" id="lblSfx"></div>
+          <div class="suffixes-grid">
+            <input type="text" id="sfx0" autocapitalize="characters" placeholder="1">
+            <input type="text" id="sfx1" autocapitalize="characters" placeholder="2">
+            <input type="text" id="sfx2" autocapitalize="characters" placeholder="3">
+            <input type="text" id="sfx3" autocapitalize="characters" placeholder="4">
+            <input type="text" id="sfx4" autocapitalize="characters" placeholder="5">
+            <input type="text" id="sfx5" autocapitalize="characters" placeholder="6">
+          </div>
+        </div>
       </div>
       <div class="divider"></div>
       <div id="listesCategories"></div>
@@ -136,101 +144,88 @@
 <script>
   var STRINGS = {
     fr: {
-      eyebrow: 'Gestion stock',
-      title: 'Liste de modèles',
-      switchBtn: '🇨🇦 English',
-      store: 'Nom du magasin',
-      storePH: 'Ex. : Boutique Saint-Laurent',
-      date: 'Date de visite',
-      cat: 'Catégorie',
-      modelPH: 'Numéro de modèle',
-      prixPH: 'Prix (optionnel)',
-      notePH: 'Note (optionnel)',
-      btnExcel: '📋 Copier pour Excel',
-      btnMsg: '💬 Copier pour message',
-      btnReset: '🗑 Tout effacer',
-      copiedExcel: '✓ Copié pour Excel !',
-      copiedMsg: '✓ Copié !',
-      toastExcel: '✓ Copié — colle dans Excel',
+      eyebrow: 'Gestion stock', title: 'Liste de modèles', switchBtn: '🇨🇦 English',
+      store: 'Nom du magasin', storePH: 'Ex. : Boutique Saint-Laurent',
+      date: 'Date de visite', cat: 'Catégorie', modelPH: 'Numéro de modèle',
+      prixPH: 'Prix (optionnel)', notePH: 'Note (optionnel)',
+      sfxLabel: 'Suffixes (optionnel)',
+      btnExcel: '📋 Copier pour Excel', btnMsg: '💬 Copier pour message',
+      btnReset: '🗑 Tout effacer', copiedExcel: '✓ Copié pour Excel !',
+      copiedMsg: '✓ Copié !', toastExcel: '✓ Copié — colle dans Excel',
       toastMsg: '✓ Copié — colle dans ton message',
-      emptyCat: 'Aucun modèle',
-      confirmReset: 'Tout effacer ?',
-      storeLabel: 'Nom du magasin',
-      dateLabel: 'Date',
-      catLabel: 'Catégorie',
-      modelLabel: 'Modele',
-      priceLabel: 'Prix',
-      noteLabel: 'Note',
-      storeMsg: 'Magasin',
-      dateMsg: 'Date',
+      emptyCat: 'Aucun modèle', confirmReset: 'Tout effacer ?',
+      storeLabel: 'Nom du magasin', storePlaceholder: '(inscrire ici)',
+      dateLabel: 'Date', catLabel: 'Catégorie', modelLabel: 'Modèle',
+      priceLabel: 'Prix', noteLabel: 'Note',
+      sfxLabels: ['Item#1','Item#2','Item#3','Item#4','Item#5','Item#6'],
+      storeMsg: 'Magasin', dateMsg: 'Date',
       cats: ['Inclinables','Stationnaires','Chambres','Cuisines','Nouveau Placement']
     },
     en: {
-      eyebrow: 'Stock Management',
-      title: 'Floor Model List',
-      switchBtn: '🇨🇦 Français',
-      store: 'Store Name',
-      storePH: 'Ex.: Saint-Laurent Boutique',
-      date: 'Visit Date',
-      cat: 'Category',
-      modelPH: 'Model number',
-      prixPH: 'Price (optional)',
-      notePH: 'Note (optional)',
-      btnExcel: '📋 Copy for Excel',
-      btnMsg: '💬 Copy for message',
-      btnReset: '🗑 Clear all',
-      copiedExcel: '✓ Copied for Excel!',
-      copiedMsg: '✓ Copied!',
-      toastExcel: '✓ Copied — paste in Excel',
+      eyebrow: 'Stock Management', title: 'Floor Model List', switchBtn: '🇨🇦 Français',
+      store: 'Store Name', storePH: 'Ex.: Saint-Laurent Boutique',
+      date: 'Visit Date', cat: 'Category', modelPH: 'Model number',
+      prixPH: 'Price (optional)', notePH: 'Note (optional)',
+      sfxLabel: 'Suffixes (optional)',
+      btnExcel: '📋 Copy for Excel', btnMsg: '💬 Copy for message',
+      btnReset: '🗑 Clear all', copiedExcel: '✓ Copied for Excel!',
+      copiedMsg: '✓ Copied!', toastExcel: '✓ Copied — paste in Excel',
       toastMsg: '✓ Copied — paste in your message',
-      emptyCat: 'No models yet',
-      confirmReset: 'Clear everything?',
-      storeLabel: 'Store Name',
-      dateLabel: 'Visit Date',
-      catLabel: 'Category',
-      modelLabel: 'Model',
-      priceLabel: 'Price',
-      noteLabel: 'Note',
-      storeMsg: 'Store',
-      dateMsg: 'Date',
+      emptyCat: 'No models yet', confirmReset: 'Clear everything?',
+      storeLabel: 'Store Name', storePlaceholder: '(enter here)',
+      dateLabel: 'Visit Date', catLabel: 'Category', modelLabel: 'Model',
+      priceLabel: 'Price', noteLabel: 'Note',
+      sfxLabels: ['Item#1','Item#2','Item#3','Item#4','Item#5','Item#6'],
+      storeMsg: 'Store', dateMsg: 'Date',
       cats: ['Recliners','Stationary','Bedrooms','Dining','New Placement']
     }
   };
 
   var CAT_ICONS = ['🛋','🛋','🛏','🪑','🆕'];
   var lang = 'fr';
-  var models = { 0: [], 1: [], 2: [], 3: [], 4: [] };
+  var models = { 0:[], 1:[], 2:[], 3:[], 4:[] };
 
   var today = new Date();
-  var yyyy  = today.getFullYear();
-  var mm    = String(today.getMonth()+1).padStart(2,'0');
-  var dd    = String(today.getDate()).padStart(2,'0');
+  var yyyy = today.getFullYear();
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var dd = String(today.getDate()).padStart(2,'0');
   var todayStr = yyyy+'-'+mm+'-'+dd;
 
   var modelInput = document.getElementById('modelInput');
-  var btnAdd     = document.getElementById('btnAdd');
-  var btnCopy    = document.getElementById('btnCopy');
-  var btnMsg     = document.getElementById('btnMsg');
-
+  var btnAdd = document.getElementById('btnAdd');
+  var btnCopy = document.getElementById('btnCopy');
+  var btnMsg = document.getElementById('btnMsg');
   var STORAGE_KEY = 'listeMagasinData';
+
+  function getSuffixes() {
+    var sfx = [];
+    for (var i = 0; i < 6; i++) {
+      sfx.push(document.getElementById('sfx'+i).value.trim());
+    }
+    return sfx;
+  }
+
+  function clearSuffixes() {
+    for (var i = 0; i < 6; i++) {
+      document.getElementById('sfx'+i).value = '';
+    }
+  }
 
   function saveToStorage() {
     try {
-      var data = {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
         lang: lang,
         storeName: document.getElementById('storeName').value,
         visitDate: document.getElementById('visitDate').value,
         models: models
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch(e) { /* localStorage unavailable, ignore */ }
+      }));
+    } catch(e) {}
   }
 
   function loadFromStorage() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      return JSON.parse(raw);
+      return raw ? JSON.parse(raw) : null;
     } catch(e) { return null; }
   }
 
@@ -260,38 +255,22 @@
     saveToStorage();
   }
 
-  // --- Restauration automatique au chargement ---
-  (function restoreOnLoad() {
-    var saved = loadFromStorage();
-    if (saved && (saved.storeName || (saved.models && Object.values(saved.models).some(function(arr){return arr.length>0;})))) {
-      lang = saved.lang || 'fr';
-      models = saved.models || { 0: [], 1: [], 2: [], 3: [], 4: [] };
-      document.getElementById('langScreen').style.display = 'none';
-      document.getElementById('appScreen').style.display = 'block';
-      applyStrings();
-      document.getElementById('storeName').value = saved.storeName || '';
-      document.getElementById('visitDate').value = saved.visitDate || todayStr;
-      render();
-    }
-  })();
-
   function applyStrings() {
     var s = STRINGS[lang];
-    document.getElementById('hdrEyebrow').textContent   = s.eyebrow;
-    document.getElementById('hdrTitle').textContent     = s.title;
+    document.getElementById('hdrEyebrow').textContent = s.eyebrow;
+    document.getElementById('hdrTitle').textContent = s.title;
     document.getElementById('langSwitchBtn').textContent = s.switchBtn;
-    document.getElementById('lblStore').textContent     = s.store;
-    document.getElementById('storeName').placeholder    = s.storePH;
-    document.getElementById('lblDate').textContent      = s.date;
-    document.getElementById('lblCat').textContent       = s.cat;
-    document.getElementById('modelInput').placeholder   = s.modelPH;
-    document.getElementById('prixInput').placeholder    = s.prixPH;
-    document.getElementById('noteInput').placeholder    = s.notePH;
-    document.getElementById('btnReset').textContent     = s.btnReset;
-    var total = totalCount();
+    document.getElementById('lblStore').textContent = s.store;
+    document.getElementById('storeName').placeholder = s.storePH;
+    document.getElementById('lblDate').textContent = s.date;
+    document.getElementById('lblCat').textContent = s.cat;
+    document.getElementById('modelInput').placeholder = s.modelPH;
+    document.getElementById('prixInput').placeholder = s.prixPH;
+    document.getElementById('noteInput').placeholder = s.notePH;
+    document.getElementById('lblSfx').textContent = s.sfxLabel;
+    document.getElementById('btnReset').textContent = s.btnReset;
     btnCopy.textContent = s.btnExcel;
-    btnMsg.textContent  = s.btnMsg;
-    // Rebuild category select
+    btnMsg.textContent = s.btnMsg;
     var sel = document.getElementById('catSelect');
     sel.innerHTML = '';
     s.cats.forEach(function(c, i) {
@@ -302,21 +281,37 @@
     });
   }
 
+  (function restoreOnLoad() {
+    var saved = loadFromStorage();
+    if (saved && (saved.storeName || Object.values(saved.models||{}).some(function(a){return a.length>0;}))) {
+      lang = saved.lang || 'fr';
+      models = saved.models || { 0:[], 1:[], 2:[], 3:[], 4:[] };
+      document.getElementById('langScreen').style.display = 'none';
+      document.getElementById('appScreen').style.display = 'block';
+      applyStrings();
+      document.getElementById('storeName').value = saved.storeName || '';
+      document.getElementById('visitDate').value = saved.visitDate || todayStr;
+      render();
+    }
+  })();
+
   function naturalSort(a, b) {
     return a.num.localeCompare(b.num, undefined, { numeric: true, sensitivity: 'base' });
   }
 
   function addModel() {
-    var val  = modelInput.value.trim().toUpperCase();
+    var val = modelInput.value.trim().toUpperCase();
     if (!val) return;
-    var cat  = parseInt(document.getElementById('catSelect').value);
+    var cat = parseInt(document.getElementById('catSelect').value);
     var prix = document.getElementById('prixInput').value.trim();
     var note = document.getElementById('noteInput').value.trim();
-    models[cat].push({ num: val, prix: prix, note: note });
+    var sfx = getSuffixes();
+    models[cat].push({ num: val, prix: prix, note: note, sfx: sfx });
     models[cat].sort(naturalSort);
     modelInput.value = '';
     document.getElementById('prixInput').value = '';
     document.getElementById('noteInput').value = '';
+    clearSuffixes();
     btnAdd.disabled = true;
     modelInput.focus();
     render();
@@ -339,7 +334,7 @@
     container.innerHTML = '';
     var total = totalCount();
     btnCopy.disabled = total === 0;
-    btnMsg.disabled  = total === 0;
+    btnMsg.disabled = total === 0;
 
     [0,1,2,3,4].forEach(function(ci) {
       var section = document.createElement('div');
@@ -347,7 +342,7 @@
       var title = document.createElement('div');
       title.className = 'cat-title cat-' + ci;
       title.innerHTML = CAT_ICONS[ci] + ' ' + s.cats[ci] +
-        (models[ci].length > 0 ? '<span class="count-badge">' + models[ci].length + '</span>' : '');
+        (models[ci].length > 0 ? '<span class="count-badge">'+models[ci].length+'</span>' : '');
       section.appendChild(title);
       if (models[ci].length === 0) {
         var empty = document.createElement('div');
@@ -359,14 +354,16 @@
           var block = document.createElement('div');
           block.className = 'model-block';
           var sub = [];
-          if (m.prix) sub.push((lang === 'fr' ? m.prix + '$' : '$' + m.prix));
+          if (m.prix) sub.push(lang === 'fr' ? m.prix+'$' : '$'+m.prix);
           if (m.note) sub.push(m.note);
+          var sfxStr = (m.sfx||[]).filter(function(x){return x;}).join(', ');
+          if (sfxStr) sub.push(sfxStr);
           block.innerHTML =
             '<div class="model-info">' +
               '<div class="model-num">' + m.num + '</div>' +
               (sub.length ? '<div class="model-sub">' + sub.join(' — ') + '</div>' : '') +
             '</div>' +
-            '<button class="remove-btn" onclick="removeModel(' + ci + ',' + i + ')">×</button>';
+            '<button class="remove-btn" onclick="removeModel('+ci+','+i+')">×</button>';
           section.appendChild(block);
         });
       }
@@ -375,37 +372,35 @@
   }
 
   function buildExcel() {
-    var s     = STRINGS[lang];
-    var store = document.getElementById('storeName').value.trim();
-    var date  = document.getElementById('visitDate').value;
-    var rows  = [];
-    rows.push(s.storeLabel + '\t' + store);
-    rows.push(s.dateLabel  + '\t' + date);
-    rows.push('');
-    rows.push(s.catLabel + '\t' + s.modelLabel + '\t' + s.priceLabel + '\t' + s.noteLabel);
+    var s = STRINGS[lang];
+    var rows = [];
     [0,1,2,3,4].forEach(function(ci) {
       models[ci].forEach(function(m) {
-        rows.push(s.cats[ci] + '\t' + m.num + '\t' + m.prix + '\t' + m.note);
+        var sfx = (m.sfx||['','','','','','']).slice(0,6);
+        while (sfx.length < 6) sfx.push('');
+        rows.push(s.cats[ci]+'\t'+m.num+'\t'+m.prix+'\t'+m.note+'\t'+sfx.join('\t'));
       });
     });
     return rows.join('\n');
   }
 
   function buildMessage() {
-    var s     = STRINGS[lang];
+    var s = STRINGS[lang];
     var store = document.getElementById('storeName').value.trim();
-    var date  = document.getElementById('visitDate').value;
+    var date = document.getElementById('visitDate').value;
     var lines = [];
     if (store) lines.push(s.storeMsg + ' : ' + store);
-    if (date)  lines.push(s.dateMsg  + ' : ' + date);
+    if (date) lines.push(s.dateMsg + ' : ' + date);
     [0,1,2,3,4].forEach(function(ci) {
       if (models[ci].length > 0) {
         lines.push('');
         lines.push(CAT_ICONS[ci] + ' ' + s.cats[ci]);
         models[ci].forEach(function(m) {
           var line = m.num;
-          if (m.prix) line += '  —  ' + (lang === 'fr' ? m.prix + '$' : '$' + m.prix);
+          if (m.prix) line += '  —  ' + (lang === 'fr' ? m.prix+'$' : '$'+m.prix);
           if (m.note) line += '  (' + m.note + ')';
+          var sfxStr = (m.sfx||[]).filter(function(x){return x;}).join(', ');
+          if (sfxStr) line += '  [' + sfxStr + ']';
           lines.push(line);
         });
       }
@@ -456,12 +451,13 @@
     var s = STRINGS[lang];
     if (totalCount() === 0 && !document.getElementById('storeName').value) return;
     if (confirm(s.confirmReset)) {
-      models = { 0: [], 1: [], 2: [], 3: [], 4: [] };
+      models = { 0:[], 1:[], 2:[], 3:[], 4:[] };
       document.getElementById('storeName').value = '';
       document.getElementById('visitDate').value = todayStr;
       modelInput.value = '';
       document.getElementById('prixInput').value = '';
       document.getElementById('noteInput').value = '';
+      clearSuffixes();
       btnAdd.disabled = true;
       render();
       clearStorage();
